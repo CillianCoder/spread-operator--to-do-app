@@ -1,21 +1,25 @@
 import React, { useState } from "react";
+import ToDoItem from "./ToDoList";
+import InputArea from "./InputArea";
+
 
 function App() {
 
-  const [currentList, setCurrentList] = useState("");
   const [doList, setDoList] = useState([]);
 
-  const detect = event => setCurrentList([event.target.value]);
 
-  const addItem = () => {
-    const newItem = {
-      id: doList.length + 1,
-      do: currentList
-    }
+  const addItem = (currentList) => {
+    setDoList(prevent => {
+      return ([...prevent, currentList]);
+    });
+  };
 
-    setDoList([...doList, newItem]);
-    setCurrentList("");
-
+  const deleteItem = (id) => {
+    setDoList(preValue => {
+      return preValue.filter((item, index) => {
+        return index !== id;
+      });
+    });
   };
 
 
@@ -24,20 +28,16 @@ function App() {
       <div className="heading">
         <h1>To-Do List</h1>
       </div>
-      <div className="form">
-        <input
-          type="text"
-          value={currentList}
-          onChange={detect}
-        />
-        <button onClick={addItem}>
-          <span>Add</span>
-        </button>
-      </div>
+        <InputArea add={addItem}/>
       <div>
         <ul>
-          {doList.map(list => (
-            <li key={list.id}>{list.do}</li>
+          {doList.map((list, index) => (
+            <ToDoItem
+              key={index}
+              id={index}
+              text={list}
+              onChecked={deleteItem}
+            />
           ))}
         </ul>
       </div>
